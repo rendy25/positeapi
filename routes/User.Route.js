@@ -4,10 +4,26 @@ const router = express.Router();
 const resResult = require('../utils/Response.Utils')
 const {getUserC, createUser, authUser} = require('../controllers/User.Controller')
 const { verifyApp, verifyUser } = require('../middleware/auth');
+const validator = require('validator');
 let jsonParser = bodyParser.json()
 let bodyUrlEncode = bodyParser.urlencoded({ extended: true })
 router.use(jsonParser)
 router.use(bodyUrlEncode)
+
+const validate = (body) => {
+   const { level, firstname, lastname, email, imageurl } = body;
+
+   const errors = {};
+  
+   if(!email) errors.email = "Email is required";
+   if(email && !validator.isEmail(email)) errors.email = "Invalid email";
+   if(!firstname) errors.firstname = "Firstname is required";
+   if(!lastname) errors.lastname = "Lastname is required";
+   if(!level) errors.level = "Level is required";
+   if(!imageurl) errors.imageurl = "Image url is required";
+
+   return errors;
+}
 
 router.get('/', verifyApp, verifyUser, async(req, res, next) => {
    console.log(req.user);
@@ -26,19 +42,16 @@ router.get('/', verifyApp, verifyUser, async(req, res, next) => {
 
 //router.post('/createUser', verifyApp, verifyUser, async (req,res,next)=> {
 router.post('/createUser', verifyApp, async (req,res,next)=> {
-   //const user = req.user.username
-   //if(user != 'azam3') resResult(403, 'Not Allowed', res)
-   try {
-     const insert = await createUser(req.body)
-     //console.log(insert['code']);
-     /*if (insert['code'] != 200){
-         console.log('1');
-     }else{
-         console.log('2');
-     }*/
-     resResult(insert.code, insert.data, res)
-   } catch (err) {
-      next(err)
+   const errors = validate(req.body);
+   if(Object.keys(errors).length === 0){
+      try {
+         const insert = await createUser({ ...req.body, statusid: 1 });
+         resResult(insert.code, insert.data, res)
+       } catch (err) {
+          next(err)
+       }
+   }else{
+      resResult(400, errors, res);
    }
    
 })
@@ -49,6 +62,7 @@ router.post('/auth', verifyApp, async(req,res,next) => {
        const token = {token: auth.data}
        resResult(auth.code, token, res)
    } catch(err) {
+      console.log({ err });
       next(err)
    }
 })
