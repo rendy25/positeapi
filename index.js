@@ -1,6 +1,7 @@
 const express = require('express');
-const port = 3000
+const port = 3080
 const app = express()
+var cors = require('cors')
 // let session = require('express-session')
 global.__basedir = __dirname;
 
@@ -18,6 +19,7 @@ const Upload = require("./routes/Upload.Route");
 //         maxAge:1000 * 60 * 60 * 24
 //     }
 // }))
+app.use(cors())
 app.use(express.urlencoded({ extended: true }));
 Upload(app);
 

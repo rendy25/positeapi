@@ -16,8 +16,15 @@ const getUser = (callback) => {
 const createUserM = (data) => {
     //const test = db('try_users').insert({username:data.username, password:data.password})
     //console.log(test)
-    return db('t_users').insert({email:data.email, firstname:data.firstname, lastname:data.lastname,
-        levelid:data.levelid, password:data.password, imageurl:data.imageurl, statusid:data.statusid})
+    return db('t_users').insert({
+        email:data.email, 
+        firstname:data.firstname, 
+        lastname:data.lastname,
+        levelid:data.level, 
+        password:data.password, 
+        imageurl:data.imageurl, 
+        statusid:data.statusid
+    })
 }
 
 const getDataLimitFromTable = (data, tableName, limit) => {

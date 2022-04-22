@@ -17,27 +17,63 @@ const getUserC = async (req, callback) => {
   return { code: 200, data: x };
 };
 
-const createUser = async (data) => {
-  const salt = await bcrypt.genSalt(10);
-  data.password = await bcrypt.hash(data.password, salt);
+// const createUser = async (data) => {
+//   const salt = await bcrypt.genSalt(10);
+//   data.password = await bcrypt.hash(data.password, salt);
   
-  const paramData = { email: data.email };
-  const userEncrypt = encrypt(paramData.email)
-  paramData.email = userEncrypt.encryptedData
-  const tokenu = await generateTokenUser(paramData);
-  const valtoken = {token: tokenu};
+//   const paramData = { email: data.email };
+//   const userEncrypt = encrypt(paramData.email)
+//   paramData.email = userEncrypt.encryptedData
+//   const tokenu = await generateTokenUser(paramData);
+//   const valtoken = {token: tokenu};
 
-  //const insert = await createUserM(data)
+//   //const insert = await createUserM(data)
 
-  //console.log(tokenu)
-  return createUserM(data)
-    .then((e) => {
-      return { code: 200, data: "success inserted" };
-    })
-    .catch((err) => {
-      return { code: 200, data: valtoken };
-    });
-};
+//   //console.log(tokenu)
+//   return createUserM(data)
+//     .then((e) => {
+//       return { code: 200, data: "success inserted" };
+//     })
+//     .catch((err) => {
+//       return { code: 200, data: valtoken };
+//     });
+// };
+
+const createUser = async (data) => {
+  const res = { code: 500 };
+
+  try {
+    const dataUser = await getDataLimitFromTable({ email: data.email }, "t_users", 1);
+
+    if(dataUser.length === 0){ //not found user
+      const add = await createUserM(data);
+      res.code  = 200;  
+      res.msg   = "User created";
+      res.token = await generateTokenUser({ email: encrypt(data.email).encryptedData, user: data });
+    }else{ //user exist return the token
+      res.msg   = "Logged in";
+      res.code  = 200; 
+      res.token = await generateTokenUser({ 
+        email: encrypt(data.email).encryptedData, 
+        user: {
+          firstname: dataUser[0].firstname,
+          lastname: dataUser[0].lastname,
+          level: dataUser[0].levelid,
+          imageurl: dataUser[0].imageurl,
+          email: dataUser[0].email,
+          statusid: dataUser[0].statusid
+        }
+      });
+    }
+  } catch (error) {
+    console.log({ error });
+    res.code  = 400;
+    res.msg   = "Opps! something wrong";
+    res.error = error;
+  }
+
+  return { code: res.code, data: res };
+}
 
 const authUser = async (data) => {
   try {
