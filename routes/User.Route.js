@@ -1,14 +1,9 @@
 const express = require('express');
-const bodyParser = require('body-parser')
 const router = express.Router();
 const resResult = require('../utils/Response.Utils')
 const {getUserC, createUser, authUser} = require('../controllers/User.Controller')
 const { verifyApp, verifyUser } = require('../middleware/auth');
 const validator = require('validator');
-let jsonParser = bodyParser.json()
-let bodyUrlEncode = bodyParser.urlencoded({ extended: true })
-router.use(jsonParser)
-router.use(bodyUrlEncode)
 
 const validate = (body) => {
    const { level, firstname, lastname, email, imageurl } = body;
