@@ -1,5 +1,3 @@
-const port = 3080
-
 const express = require('express');
 const app = express()
 var cors = require('cors')
@@ -47,6 +45,6 @@ app.get("/code/:name", (req, res) => {
     });
 });
 
-app.listen(port, ()=> {
-    console.log(`Serve listening at http://0.0.0.0:${port}`)
+app.listen(process.env.APP_PORT, ()=> {
+    console.log(`Serve listening at http://0.0.0.0:${process.env.APP_PORT}`)
 })
