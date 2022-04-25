@@ -40,9 +40,9 @@ router.post("/upload", verifyApp, verifyUser, async function(req, res, next) {
                     const encryptedFile = [];
 
                     req.files.map(row => {
-                         const { destination, path, originalname } = row;
+                         const { destination, path, originalname, filename } = row;
                          var fileType   = originalname.split('.');
-                         var newName    = encrypt(req.body.email).encryptedData + '.' + fileType[fileType.length - 1];
+                         var newName    = encrypt(req.body.email + filename).encryptedData + '.' + fileType[fileType.length - 1];
                          
                          fs.renameSync(path, destination + newName);
 
