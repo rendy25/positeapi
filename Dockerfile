@@ -1,5 +1,5 @@
 FROM node:14-alpine
-LABEL maintainer "azam hizbul <azamhizbul@gmail.com>"
+LABEL maintainer "lanchen <rendydwi38@gmail.com>"
 WORKDIR /usr/src/app
 COPY package*.json ./
 
