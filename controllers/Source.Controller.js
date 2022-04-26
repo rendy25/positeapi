@@ -73,8 +73,8 @@ const list = async (body) => {
                          frameworkid: row.framework_id,
                          title: row.title,
                          author: `${row.firstname} ${row.lastname}`,
-                         img: process.env.APP_HOST + '/uploads/' + row.preview_imgurl,
-                         code: process.env.APP_HOST + '/code/' + row.filename,
+                         img: process.env.APP_HOST + ":" + process.env.APP_PORT + '/uploads/' + row.preview_imgurl,
+                         code: process.env.APP_HOST + ":" + process.env.APP_PORT + '/code/' + row.filename,
                          person: row.imageurl 
                     })
                })
